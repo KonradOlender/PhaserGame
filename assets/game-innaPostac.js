@@ -61,14 +61,15 @@ function create()
     player = this.physics.add.sprite(50, 100, 'playerIdle');
     player.body.setCollideWorldBounds(true);
     player.body.setVelocityY(200);
+    player.body.setSize(45, 65)
 
     //creating platforms
     platforms = this.physics.add.staticGroup();
     for(let i = 0; i < 20; i++)
     {
-        platforms.create(200 - 100 *(i + 1)/2, 200 - 25*(i+1), "platform");
+        platforms.create(50 + 32*i, 550, "platform");
     }
-    platforms.create(200, 375, "platform");
+    platforms.create(725, 575, "platform");
     this.physics.add.collider(player, platforms);
     
     //creating keyboard that gives information what keys are pressed
