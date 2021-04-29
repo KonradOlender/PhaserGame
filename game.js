@@ -1,18 +1,19 @@
 var gameSpace = document.getElementById("game");
-var player;
+//game objects
+var player, platforms;
 var playerControlKeys;
-var jumpVelocity = -100;
-var playerMovementVelocity = 200;
+//game values
+var jumpVelocity = -200, playerMovementVelocity = 200;
 
 var config = {
     type: Phaser.AUTO,
-    width: 800, height: 500,
+    width: 800, height: 400,
     parent: gameSpace,
     physics: { 
         default: 'arcade', 
         arcade: {
             gravity: {
-                y: 100
+                y: 500
             },
         }
     },
@@ -33,6 +34,7 @@ function preload()
         frameHeight: 48,
     })
     this.load.image("background", "games/gofish/background.png")
+    this.load.image("platform", "games/breakout/brick1.png")
 }
 
 function create()
@@ -41,8 +43,18 @@ function create()
     let image = this.add.image(0, 0, "background").setOrigin(0,0);
     player = this.physics.add.sprite(50, 100, 'player');
     player.body.setCollideWorldBounds(true);
+    player.body.setVelocityY(200);
+    //creating platforms
+    platforms = this.physics.add.staticGroup();
+    for(let i = 0; i < 20; i++)
+    {
+        platforms.create(200 - 100 *(i + 1)/2, 200 - 25*(i+1), "platform");
+    }
+    platforms.create(200, 375, "platform");
+    this.physics.add.collider(player, platforms);
     //creating keyboard that gives information what keys are pressed
     playerControlKeys = this.input.keyboard.createCursorKeys();
+    
     //creating player animation
     this.anims.create({
             key: "leftMovement",
@@ -94,9 +106,9 @@ function update()
     }
         
 
-    if(playerControlKeys.up.isDown && player.body.onFloor())
+    if((playerControlKeys.up.isDown || playerControlKeys.space.isDown) && player.body.onFloor())
     {
-        player.setVelocityY(-100)
+        player.setVelocityY(jumpVelocity)
         //to do: try this with platforms
     }
 }
