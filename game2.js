@@ -2,6 +2,7 @@ var gameSpace = document.getElementById("game");
 //game objects
 var player, platforms;
 var playerControlKeys;
+var sizeOfSingleBlock = 32;
 //game values
 var jumpVelocity = -200, playerMovementVelocity = 200, playerFacingLeft = false;
 
@@ -55,20 +56,16 @@ function preload()
 
 function create()
 {
-    //loading player and background image
+    //setting up a world
     let image = this.add.image(0, 0, "background").setOrigin(0,0);
     image.setScale(0.6);
+    //loading player
     player = this.physics.add.sprite(50, 100, 'playerIdle');
     player.body.setCollideWorldBounds(true);
     player.body.setVelocityY(200);
-
     //creating platforms
     platforms = this.physics.add.staticGroup();
-    for(let i = 0; i < 20; i++)
-    {
-        platforms.create(50 + 32*i, 550, "platform");
-    }
-    platforms.create(725, 575, "platform");
+    drawPlatforms(platforms);
     this.physics.add.collider(player, platforms);
     
     //creating keyboard that gives information what keys are pressed
@@ -165,8 +162,8 @@ function update()
     {
         player.setVelocityY(jumpVelocity)
     }
-
     playShootingAnimation();
+
 }
 
 function playShootingAnimation()
@@ -175,10 +172,18 @@ function playShootingAnimation()
     {
         if(playerFacingLeft)
         {
-            console.log("here")
             player.anims.play("shootingLeft", true);
         }
         else
             player.anims.play("shootingRight", true);
     }
+}
+
+function drawPlatforms(platforms)
+{
+    for(let i = 0; i < 20; i++)
+    {
+        platforms.create(50 + 32*i, 550, "platform");
+    }
+    platforms.create(725, 575, "platform");
 }
