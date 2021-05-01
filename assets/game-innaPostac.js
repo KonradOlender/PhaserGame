@@ -61,7 +61,6 @@ function create()
     player = this.physics.add.sprite(50, 100, 'playerIdle');
     player.body.setCollideWorldBounds(true);
     player.body.setVelocityY(200);
-    player.body.setSize(45, 65)
 
     //creating platforms
     platforms = this.physics.add.staticGroup();
@@ -96,12 +95,12 @@ function create()
     );
 
     this.anims.create({
-        key: "idleRight",
-        frames: [{key: "playerIdle", frame: 1 }],
-        frameRate: 5,
-        repeat: -1
-    }
-);
+            key: "idleRight",
+            frames: [{key: "playerIdle", frame: 1 }],
+            frameRate: 5,
+            repeat: -1
+        }
+    );
 
     this.anims.create({
             key: "rightMovement",
@@ -117,22 +116,22 @@ function create()
             key: "shootingLeft",
             frames: this.anims.generateFrameNumbers('playerShootingLeft', {
                 start: 0,
-                end: 2,
+                end: 1,
             }),
-            frameRate: 20,
+            frameRate: 10,
             repeat: -1
         }
     );
     this.anims.create({
-        key: "shootingRight",
-        frames: this.anims.generateFrameNumbers('playerShootingRight', {
-            start: 0,
-            end: 2,
-        }),
-        frameRate: 20,
-        repeat: 0
-    }
-);
+            key: "shootingRight",
+            frames: this.anims.generateFrameNumbers('playerShootingRight', {
+                start: 0,
+                end: 1,
+            }),
+            frameRate: 10,
+            repeat: -1
+        }
+    );
 }
 
 function update()
@@ -151,6 +150,9 @@ function update()
     }
     else
     {
+        if(playerControlKeys.space.isDown)
+            playShootingAnimation();
+        else
         if(playerFacingLeft)
             player.anims.play("idleLeft", true);
         else
@@ -164,10 +166,18 @@ function update()
         player.setVelocityY(jumpVelocity)
     }
 
+    playShootingAnimation();
+}
+
+function playShootingAnimation()
+{
     if(playerControlKeys.space.isDown)
     {
         if(playerFacingLeft)
+        {
+            console.log("here")
             player.anims.play("shootingLeft", true);
+        }
         else
             player.anims.play("shootingRight", true);
     }
