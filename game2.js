@@ -3,8 +3,13 @@ var gameSpace = document.getElementById("game");
 var player, platforms;
 var playerControlKeys;
 var sizeOfSingleBlock = 32;
+var minBreakBetweenLevels = 110; //dla swobodnego skoku i chodzenia
+var widthOfSingleBlock = 16;
+var spawnPoint = { x:50, y:520 }
+//var spawnPoint = { x:50, y:100 }
 //game values
 var jumpVelocity = -200, playerMovementVelocity = 200, playerFacingLeft = false;
+var currentLevel = 1;
 
 var config = {
     type: Phaser.AUTO,
@@ -60,7 +65,7 @@ function create()
     let image = this.add.image(0, 0, "background").setOrigin(0,0);
     image.setScale(0.6);
     //loading player
-    player = this.physics.add.sprite(50, 100, 'playerIdle');
+    player = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'playerIdle');
     player.body.setCollideWorldBounds(true);
     player.body.setVelocityY(200);
     //creating platforms
@@ -160,6 +165,7 @@ function update()
 
     if((playerControlKeys.up.isDown) && player.body.onFloor())
     {
+        //this.scene.restart(); -> ponownie rysuje scene
         player.setVelocityY(jumpVelocity)
     }
     playShootingAnimation();
@@ -176,14 +182,64 @@ function playShootingAnimation()
         }
         else
             player.anims.play("shootingRight", true);
+
     }
 }
 
 function drawPlatforms(platforms)
 {
-    for(let i = 0; i < 20; i++)
+    let startHeight = config.height, startWidth = 0;
+    //0 floor
+    for(let i = 0; i < config.width/sizeOfSingleBlock + 1; i++)
     {
-        platforms.create(50 + 32*i, 550, "platform");
+        platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
     }
-    platforms.create(725, 575, "platform");
+    
+    // first floor
+    startHeight = startHeight - minBreakBetweenLevels;
+    for(let i = 2; i < config.width/sizeOfSingleBlock/2 + 1; i++)
+    {
+        platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+    }
+
+    for(let i = 3*(config.width/sizeOfSingleBlock/4) + 1;  i < config.width/sizeOfSingleBlock - 3; i++)
+    {
+        platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+    }
+
+    // second floor
+    startHeight = startHeight - minBreakBetweenLevels;
+    for(let i = config.width/sizeOfSingleBlock/4 + 1; i < config.width/sizeOfSingleBlock - 3; i++)
+    {
+        platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+    }
+
+    //third floor
+    startHeight = startHeight - minBreakBetweenLevels;
+    for(let i = 2; i < 3*config.width/sizeOfSingleBlock/4 + 1; i++)
+    {
+        platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+    }
+
+    //stairs between 3rd and 4th floor
+    for(let i = 3*config.width/sizeOfSingleBlock/4 + 2; i < config.width/sizeOfSingleBlock - 3 ; i++)
+    {
+        platforms.create(
+            startWidth + i*sizeOfSingleBlock,
+            startHeight - widthOfSingleBlock/2 - 25 * (i - 3*config.width/sizeOfSingleBlock/4 - 1),
+            "platform"
+        );
+    }
+
+    //fourth floor
+    startHeight = startHeight - minBreakBetweenLevels;
+    for(let i = config.width/sizeOfSingleBlock/4 + 1; i < 3*config.width/sizeOfSingleBlock/4 + 1; i++)
+    {
+        platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+    }
+
+    for(let i = 2;  i < config.width/sizeOfSingleBlock/6; i++)
+    {
+        platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2 ,"platform");
+    }
 }
