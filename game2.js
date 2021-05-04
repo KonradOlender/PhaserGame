@@ -154,7 +154,7 @@ class FirstLevel extends Phaser.Scene{
             
 
         if((playerControlKeys.up.isDown) && player.body.onFloor())
-        { this.nextScene();
+        { 
             player.setVelocityY(jumpVelocity)
         }
         this.playShootingAnimation();
