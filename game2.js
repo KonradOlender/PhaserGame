@@ -14,11 +14,13 @@ var currentLevel = 1;
 
 //----------------------------------------------------------------------------------------------------------> First Level
 class FirstLevel extends Phaser.Scene{
-    constructor ()
+    constructor (name = null)
     {
-        super("FirstLevel");
+        if(name == null)
+            super("FirstLevel");
+        else
+            super(name);
     }
-
     preload()
     {
         this.load.crossOrigin = "anonymous";
@@ -152,7 +154,7 @@ class FirstLevel extends Phaser.Scene{
             
 
         if((playerControlKeys.up.isDown) && player.body.onFloor())
-        {
+        { this.nextScene();
             player.setVelocityY(jumpVelocity)
         }
         this.playShootingAnimation();
@@ -396,7 +398,56 @@ class SecondLevel extends FirstLevel
 
     drawPlatforms(platforms)
     {
+        let startHeight = config.height, startWidth = 0;
+        //0 floor
+        for(let i = 0; i < config.width/sizeOfSingleBlock + 1; i++)
+        {
+            platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+        }
         
+        // first floor
+        startHeight = startHeight - minBreakBetweenLevels;
+        for(let i = 2; i < config.width/sizeOfSingleBlock/4 + 1; i++)
+        {
+            platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+        }
+
+        for(let i = 3*(config.width/sizeOfSingleBlock/4) + 1;  i < config.width/sizeOfSingleBlock - 3; i++)
+        {
+            platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+        }
+
+        // second floor
+        startHeight = startHeight - minBreakBetweenLevels;
+        for(let k = 0; k < 6; k++)
+            for(let i = k*config.width/sizeOfSingleBlock/6 + 1; i < (k+1)*config.width/sizeOfSingleBlock/6 - 2; i++)
+            {
+                platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+            }
+
+        //third floor
+        startHeight = startHeight - minBreakBetweenLevels;
+        for(let i = 2; i < 2*config.width/sizeOfSingleBlock/5 + 1; i++)
+        {
+            platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+        }
+
+        for(let i =  4*config.width/sizeOfSingleBlock/5; i < config.width/sizeOfSingleBlock; i++)
+        {
+            platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+        }
+
+        //fourth floor
+        startHeight = startHeight - minBreakBetweenLevels;
+        for(let i = config.width/sizeOfSingleBlock/2 + 1; i < 4*config.width/sizeOfSingleBlock/5 + 1; i++)
+        {
+            platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+        }
+
+        for(let i = 2;  i < config.width/sizeOfSingleBlock/6; i++)
+        {
+            platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2 ,"platform");
+        }
     }
 
     nextScene()
@@ -417,12 +468,68 @@ class ThirdLevel extends FirstLevel
 {
     constructor()
     {
-        super("SecondLevel")
+        super("ThirdLevel")
     }
 
     drawPlatforms(platforms)
     {
+        let startHeight = config.height, startWidth = 0;
+        //0 floor
+        for(let i = 0; i < config.width/sizeOfSingleBlock + 1; i++)
+        {
+            platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+        }
         
+        // first floor
+        startHeight = startHeight - minBreakBetweenLevels;
+        for(let k = 0; k < 6; k++)
+            for(let i = k*config.width/sizeOfSingleBlock/6 + 1; i < (k+1)*config.width/sizeOfSingleBlock/6 - 2; i++)
+            {
+                platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+            }
+
+        // second floor
+        startHeight = startHeight - minBreakBetweenLevels;
+        for(let i = 1; i < config.width/sizeOfSingleBlock/2 - 2; i++)
+        {
+            platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+        }
+        for(let i = config.width/sizeOfSingleBlock/2 + 1; i < config.width/sizeOfSingleBlock - 2; i++)
+        {
+            platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+        }
+        //third floor
+        startHeight = startHeight - minBreakBetweenLevels;
+        for(let i = 2*config.width/sizeOfSingleBlock/5; i < 3*config.width/sizeOfSingleBlock/5 + 1; i++)
+        {
+            platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+        }
+        
+        //stairs between third and fourth floor
+        let spaceBetweenStairsHorizontally = 40;
+        let spaceBetweenStairsVertically = 25;
+        let additionalStart = config.width/6;
+        console.log(startWidth)
+        for(let i = 4; i > 1 ; i--)
+        {
+            platforms.create(
+                startWidth + 2*(5-i)*spaceBetweenStairsHorizontally + additionalStart,
+                startHeight -  i*spaceBetweenStairsVertically,
+                "platform"
+            );
+        }
+
+        //fourth floor
+        startHeight = startHeight - minBreakBetweenLevels;
+        for(let i = config.width/sizeOfSingleBlock/2 + 1; i < 4*config.width/sizeOfSingleBlock/5 + 1; i++)
+        {
+            platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+        }
+
+        for(let i = 2;  i < config.width/sizeOfSingleBlock/6; i++)
+        {
+            platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2 ,"platform");
+        }
     }
 
     nextScene()
