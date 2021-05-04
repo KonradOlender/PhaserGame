@@ -157,10 +157,14 @@ class FirstLevel extends Phaser.Scene{
         }
         this.playShootingAnimation();
 
-        if(gameFinished)
+        if(gameFinished)//level finsihed or sth like that
         {
-            this.scene.stop("FirstLevel");
-            this.scene.start("EndWindow");
+            this.nextScene();
+        }
+
+        if(false)//lost level
+        {
+            this.gameOver();
         }
     }
 
@@ -235,14 +239,29 @@ class FirstLevel extends Phaser.Scene{
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2 ,"platform");
         }
     }
+
+    nextScene()
+    {
+        this.scene.stop("FirstLevel");
+        this.scene.start("SecondLevel");
+    }
+
+    gameOver()
+    {
+        this.scene.stop("FirstLevel");
+        this.scene.start("EndWindow");
+    }
     
 }
 
 //----------------------------------------------------------------------------------------------------------> Start Window
 class StartWindow extends Phaser.Scene{
-    constructor ()
+    constructor (name = null)
     {
-        super("StartWindow");
+        if(name == null)
+            super("StartWindow");
+        else
+            super(name);
     }
 
     preload()
@@ -368,6 +387,57 @@ class EndWindow extends Phaser.Scene{
 
 }
 
+class SecondLevel extends FirstLevel
+{
+    constructor()
+    {
+        super("SecondLevel")
+    }
+
+    drawPlatforms(platforms)
+    {
+        
+    }
+
+    nextScene()
+    {
+        this.scene.stop("SecondLevel");
+        this.scene.start("ThirdLevel");
+    }
+
+    gameOver()
+    {
+        this.scene.stop("SecondLevel");
+        this.scene.start("EndWindow");
+    }
+}
+
+
+class ThirdLevel extends FirstLevel
+{
+    constructor()
+    {
+        super("SecondLevel")
+    }
+
+    drawPlatforms(platforms)
+    {
+        
+    }
+
+    nextScene()
+    {
+        this.scene.stop("ThirdLevel");
+        this.scene.start("EndWindow");
+    }
+
+    gameOver()
+    {
+        this.scene.stop("ThirdLevel");
+        this.scene.start("EndWindow");
+    }
+}
+
 var config = {
     type: Phaser.AUTO,
     width: 1100, height: 600,
@@ -380,6 +450,6 @@ var config = {
             },
         }
     },
-    scene: [StartWindow,FirstLevel, EndWindow]
+    scene: [StartWindow, FirstLevel, SecondLevel, ThirdLevel, EndWindow]
 };       
 var game = new Phaser.Game(config);
