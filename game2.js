@@ -1,10 +1,12 @@
 var gameSpace = document.getElementById("game");
 //game objects
 var player, platforms;
+var door, ladders, coins, bullets;
 var playerControlKeys;
 var sizeOfSingleBlock = 32;
 var minBreakBetweenLevels = 110; //dla swobodnego skoku i chodzenia
 var widthOfSingleBlock = 16;
+var heightOfSingleLadder = 170;
 var spawnPoint = { x:50, y:520 }
 var spawnPointStartScene = { x:50, y:100 }
 //game values
@@ -47,6 +49,23 @@ class FirstLevel extends Phaser.Scene{
         })
         this.load.image("background", "background.png")
         this.load.image("platform", "platform.png")
+        
+        this.load.image("coin", "coin.png", {
+            frameWidth: 32,
+            frameHeight: 32
+        });
+        this.load.image("bullet", "bullet.png")
+        this.load.image("ladder", "ladder.png")
+        /*mogą się później przydać
+        this.load.image("diamond", "sprites/diamond.png")
+        this.load.coin("explode", "games/invaders/explode.png", {
+            frameWidth: 32,
+            frameHeight: 48,
+        })*/
+        
+        //nie moglam znalezc drzwi - na razie jest cokolwiek XD
+        this.load.image("door", "mushroom.png")
+
     }
 
     create()
@@ -62,6 +81,19 @@ class FirstLevel extends Phaser.Scene{
         platforms = this.physics.add.staticGroup();
         this.drawPlatforms(platforms);
         this.physics.add.collider(player, platforms);
+
+        //creating door
+        //door = this.physics.add.sprite(100,200, 'door');
+        this.drawDoor(door, this);
+        //this.physics.add.collider(door,platforms);
+        //creating ladder
+        ladders = this.physics.add.staticGroup();
+        this.drawLadders(ladders);
+        //creating coins
+        coins = this.physics.add.staticGroup();
+        this.drawCoins(coins);
+        //creating bullets
+        bullets = this.physics.add.staticGroup();
         
         //creating keyboard that gives information what keys are pressed
         playerControlKeys = this.input.keyboard.createCursorKeys();
@@ -124,10 +156,23 @@ class FirstLevel extends Phaser.Scene{
                 repeat: -1
             }
         );
+
+        this.anims.create({
+                key: "flipingCoin",
+                frames: this.anims.generateFrameNumbers('coin', {
+                    start: 0,
+                    end: 5
+            }),
+            frameRate: 1,
+            repeat: -1
+        });
+        //coins.anims.play("flipingCoin", true);
+
     }
 
     update()
     {
+        //coins.anims.play("flipingCoin", true);
         if(playerControlKeys.left.isDown)
         {
             player.anims.play("leftMovement", true);
@@ -158,6 +203,7 @@ class FirstLevel extends Phaser.Scene{
             player.setVelocityY(jumpVelocity)
         }
         this.playShootingAnimation();
+        //this.playCoinAnimation();
 
         if(gameFinished)//level finsihed or sth like that
         {
@@ -168,6 +214,11 @@ class FirstLevel extends Phaser.Scene{
         {
             this.gameOver();
         }
+    }
+
+    playCoinAnimation()
+    {
+        coins.anims.play("flipingCoin", true);
     }
 
     playShootingAnimation()
@@ -240,6 +291,48 @@ class FirstLevel extends Phaser.Scene{
         {
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2 ,"platform");
         }
+    }
+
+    drawDoor(door, game)
+    {
+        door = this.physics.add.sprite(100,225, 'door');
+        game.physics.add.collider(door,platforms);
+    }
+
+    drawCoins(coins)
+    {
+        let startHeight = config.height- minBreakBetweenLevels/2, startWidth = 400;
+        //0 floor
+        for(let i=0; i<1; i++)
+        {
+            coins.create(startWidth+i*50, startHeight, "coin");
+        }
+
+    }
+
+    drawLadders(ladders)
+    {
+        let startHeight = config.height - heightOfSingleLadder/2 -  widthOfSingleBlock, startWidth = 300;
+        //floor 0 to 1
+        ladders.create(startWidth, startHeight,"ladder");
+        startWidth=900;
+        ladders.create(startWidth, startHeight,"ladder");
+
+        //floor 1 to 2
+        startHeight = startHeight - minBreakBetweenLevels;
+        startWidth=500;
+        ladders.create(startWidth, startHeight,"ladder");
+
+        //floor 2 to 3
+        startHeight = startHeight - minBreakBetweenLevels;
+        startWidth=350;
+        ladders.create(startWidth, startHeight,"ladder");
+
+        //floor 3 to 4 
+        startHeight = startHeight - minBreakBetweenLevels;
+        startWidth=150;
+        ladders.create(startWidth, startHeight,"ladder");
+        
     }
 
     nextScene()
@@ -449,6 +542,54 @@ class SecondLevel extends FirstLevel
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2 ,"platform");
         }
     }
+    
+    drawDoor(door, game)
+    {
+        door = this.physics.add.sprite(650,115, 'door');
+        game.physics.add.collider(door,platforms);
+    }
+    
+    drawCoins(coins)
+    {
+        let startHeight = config.height- minBreakBetweenLevels/2, startWidth = 400;
+        //0 floor
+        for(let i=0; i<1; i++)
+        {
+            coins.create(startWidth+i*50, startHeight, "coin");
+        }
+
+    }
+
+    drawLadders(ladders)
+    {
+        let startHeight = config.height - heightOfSingleLadder/2 -  widthOfSingleBlock, startWidth = 280;
+        //floor 0 to 1
+        ladders.create(startWidth, startHeight,"ladder");
+        startWidth=880;
+        ladders.create(startWidth, startHeight,"ladder");
+
+        //floor 1 to 2
+        startHeight = startHeight - minBreakBetweenLevels;
+        startWidth=100;
+        ladders.create(startWidth, startHeight,"ladder");
+        startWidth=940;
+        ladders.create(startWidth, startHeight,"ladder");
+
+        //floor 2 to 3
+        startHeight = startHeight - minBreakBetweenLevels;
+        startWidth=400;
+        ladders.create(startWidth, startHeight,"ladder");
+        startWidth=990;
+        ladders.create(startWidth, startHeight,"ladder");
+
+        //floor 3 to 4 
+        startHeight = startHeight - minBreakBetweenLevels;
+        startWidth=150;
+        ladders.create(startWidth, startHeight,"ladder");
+        startWidth=900;
+        ladders.create(startWidth, startHeight,"ladder");
+        
+    }
 
     nextScene()
     {
@@ -530,6 +671,48 @@ class ThirdLevel extends FirstLevel
         {
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2 ,"platform");
         }
+    }
+
+    drawDoor(door, game)
+    {
+        door = this.physics.add.sprite(950,335, 'door');
+        game.physics.add.collider(door,platforms);
+    }
+
+    drawCoins(coins)
+    {
+        let startHeight = config.height- minBreakBetweenLevels/2, startWidth = 400;
+        //0 floor
+        for(let i=0; i<1; i++)
+        {
+            coins.create(startWidth+i*50, startHeight, "coin");
+        }
+
+    }
+
+    drawLadders(ladders)
+    {
+        let startHeight = config.height - heightOfSingleLadder/2 -  widthOfSingleBlock, startWidth = 290;
+        //floor 0 to 1
+        ladders.create(startWidth, startHeight,"ladder");
+        startWidth=750;
+        ladders.create(startWidth, startHeight,"ladder");
+
+        //floor 1 to 2
+        startHeight = startHeight - minBreakBetweenLevels;
+        startWidth=450;
+        ladders.create(startWidth, startHeight,"ladder");
+
+        //floor 2 to 3
+        startHeight = startHeight - minBreakBetweenLevels;
+        startWidth=680;
+        ladders.create(startWidth, startHeight,"ladder");
+
+        //floor 3 to 4 
+        startHeight = startHeight - minBreakBetweenLevels;
+        startWidth=580;
+        ladders.create(startWidth, startHeight,"ladder");
+        
     }
 
     nextScene()
