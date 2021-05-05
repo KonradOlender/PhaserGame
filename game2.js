@@ -13,6 +13,7 @@ var spawnPointStartScene = { x:50, y:100 }
 var jumpVelocity = -200, playerMovementVelocity = 200, playerFacingLeft = false, gameWon = false, gameFinished = false;
 var minNumberOfCoins = 15;
 var currentLevel = 1;
+var numberOfCoinsText;
 
 //----------------------------------------------------------------------------------------------------------> First Level
 class FirstLevel extends Phaser.Scene{
@@ -22,6 +23,8 @@ class FirstLevel extends Phaser.Scene{
             super("FirstLevel");
         else
             super(name);
+
+        this.currentNumberOfCoins = 0;
     }
     preload()
     {
@@ -95,6 +98,18 @@ class FirstLevel extends Phaser.Scene{
         //creating bullets
         bullets = this.physics.add.staticGroup();
         
+        //
+            numberOfCoinsText = this.add.text(
+            0,
+            0,
+            `Coins needed to open the door: ${this.currentNumberOfCoins} / ${minNumberOfCoins}` ,
+            {
+                font: "20px Georgia",
+                fill: "#ffd700",
+                align: "center"
+            }
+        );
+        numberOfCoinsText.visible = true;
         //creating keyboard that gives information what keys are pressed
         playerControlKeys = this.input.keyboard.createCursorKeys();
         
@@ -199,7 +214,7 @@ class FirstLevel extends Phaser.Scene{
             
 
         if((playerControlKeys.up.isDown) && player.body.onFloor())
-        { 
+        { this.addCoin();
             player.setVelocityY(jumpVelocity)
         }
         this.playShootingAnimation();
@@ -347,6 +362,12 @@ class FirstLevel extends Phaser.Scene{
         this.scene.start("EndWindow");
     }
     
+    addCoin()
+    {
+        this.currentNumberOfCoins++;
+        if(this.currentNumberOfCoins <= minNumberOfCoins)
+            numberOfCoinsText.setText(`Coins needed to open the door: ${this.currentNumberOfCoins} / ${minNumberOfCoins}`)
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------> Start Window
