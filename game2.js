@@ -53,7 +53,7 @@ class FirstLevel extends Phaser.Scene{
         this.load.image("background", "background.png")
         this.load.image("platform", "platform.png")
         
-        this.load.image("coin", "coin.png", {
+        this.load.spritesheet("coin", "coin.png", {
             frameWidth: 32,
             frameHeight: 32
         });
@@ -98,6 +98,7 @@ class FirstLevel extends Phaser.Scene{
         //creating bullets
         bullets = this.physics.add.staticGroup();
         
+        //this.physics.add.collider(player, ladders, playerIsOnLadder);
         //
             numberOfCoinsText = this.add.text(
             0,
@@ -183,6 +184,7 @@ class FirstLevel extends Phaser.Scene{
         });
         //coins.anims.play("flipingCoin", true);
 
+
     }
 
     update()
@@ -229,6 +231,33 @@ class FirstLevel extends Phaser.Scene{
         {
             this.gameOver();
         }
+
+        //this.physics.collide(player, ladders, this.playerIsOnLadder);
+        this.physics.overlap(player, ladders, this.playerIsOnLadder);
+        this.physics.collide(player, coins, this.playerGetCoin);
+    }
+
+    playerIsOnLadder(player, ladder)
+    {
+        if(playerControlKeys.up.isDown)
+        {
+            //player.body.velocity.y --;
+            player.setVelocityY = player.setVelocityY--;
+            //player.body.y--;
+        }
+        else if (playerControlKeys.down.isDown)
+            player.body.y++; 
+        else 
+        {
+            player.body.gravity.y = 0;
+            player.body.velocity.y = 0;
+        }
+    }
+
+    playerGetCoin(player, coin)
+    {
+        coin.disableBody(true, true);
+        // trzeba dodać + punkt
     }
 
     playCoinAnimation()
@@ -331,6 +360,8 @@ class FirstLevel extends Phaser.Scene{
         //floor 0 to 1
         ladders.create(startWidth, startHeight,"ladder");
         startWidth=900;
+        ladders.create(startWidth, startHeight,"ladder");
+        startWidth=700;
         ladders.create(startWidth, startHeight,"ladder");
 
         //floor 1 to 2
