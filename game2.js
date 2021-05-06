@@ -189,6 +189,9 @@ class FirstLevel extends Phaser.Scene{
 
     update()
     {
+        Phaser.Actions.Call(coins.getChildren(), child => {
+            child.anims.play('flipingCoin', true);
+        });
         //coins.anims.play("flipingCoin", true);
         if(playerControlKeys.left.isDown)
         {
