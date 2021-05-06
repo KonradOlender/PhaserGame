@@ -15,7 +15,11 @@ var jumpVelocity = -200, playerMovementVelocity = 200, playerFacingLeft = false,
 var minNumberOfCoins = 15;
 var currentLevel = 1;
 var numberOfCoinsText;
+<<<<<<< HEAD
 var enemievelocity = 80;
+=======
+var level;
+>>>>>>> 908be43867d634ceb78f7393880b7aa07ec01489
 
 //----------------------------------------------------------------------------------------------------------> First Level
 class FirstLevel extends Phaser.Scene{
@@ -27,6 +31,7 @@ class FirstLevel extends Phaser.Scene{
             super(name);
 
         this.currentNumberOfCoins = 0;
+        level = this;
     }
     preload()
     {
@@ -98,9 +103,7 @@ class FirstLevel extends Phaser.Scene{
         
 
         //creating door
-        //door = this.physics.add.sprite(100,200, 'door');
         this.drawDoor(door, this);
-        //this.physics.add.collider(door,platforms);
         //creating ladder
         ladders = this.physics.add.staticGroup();
         this.drawLadders(ladders);
@@ -191,11 +194,9 @@ class FirstLevel extends Phaser.Scene{
                     start: 0,
                     end: 5
             }),
-            frameRate: 1,
+            frameRate: 5,
             repeat: -1
         });
-        //coins.anims.play("flipingCoin", true);
-
 
     }
 
@@ -204,7 +205,7 @@ class FirstLevel extends Phaser.Scene{
         Phaser.Actions.Call(coins.getChildren(), child => {
             child.anims.play('flipingCoin', true);
         });
-        //coins.anims.play("flipingCoin", true);
+        
         if(playerControlKeys.left.isDown)
         {
             player.anims.play("leftMovement", true);
@@ -230,7 +231,7 @@ class FirstLevel extends Phaser.Scene{
         }
 
         if((playerControlKeys.up.isDown) && player.body.onFloor())
-        { this.addCoin();
+        {
             player.setVelocityY(jumpVelocity)
         }
         this.playShootingAnimation();
@@ -265,11 +266,13 @@ class FirstLevel extends Phaser.Scene{
         }
         
 
+
+        
     }
 
     playerIsOnLadder(player, ladder)
     {
-        if(playerControlKeys.up.isDown)
+        /*if(playerControlKeys.up.isDown)
         {
             //player.body.velocity.y --;
             player.setVelocityY = player.setVelocityY--;
@@ -281,13 +284,13 @@ class FirstLevel extends Phaser.Scene{
         {
             player.body.gravity.y = 0;
             player.body.velocity.y = 0;
-        }
+        }*/
     }
 
     playerGetCoin(player, coin)
     {
+        level.addCoin();
         coin.disableBody(true, true);
-        // trzeba dodać + punkt
     }
 
     playCoinAnimation()
@@ -388,46 +391,64 @@ class FirstLevel extends Phaser.Scene{
         }
     }
 
-    drawDoor(door, game)
+    drawDoor(door, th)
     {
         door = this.physics.add.sprite(100,225, 'door');
-        game.physics.add.collider(door,platforms);
+        th.physics.add.collider(door,platforms);
     }
 
     drawCoins(coins)
     {
         let startHeight = config.height- minBreakBetweenLevels/2, startWidth = 400;
         //0 floor
-        for(let i=0; i<2; i++)
-        {
+        for(let i=0; i<4; i++)
             coins.create(startWidth+i*50, startHeight, "coin");
-        }
+        //1 floor
+        startHeight-=minBreakBetweenLevels;
+        startWidth = 90;
+        for(let i=0; i<2; i++)
+            coins.create(startWidth+i*50, startHeight, "coin");
+        //2 floor
+        startHeight-=minBreakBetweenLevels;
+        startWidth = 700;
+        for(let i=0; i<3; i++)
+            coins.create(startWidth+i*50, startHeight, "coin");
+        //3 floor
+        startHeight-=minBreakBetweenLevels;
+        startWidth = 600;
+        for(let i=0; i<2; i++)
+            coins.create(startWidth+i*50, startHeight, "coin");
+        //4 floor
+        startHeight-=minBreakBetweenLevels;
+        startWidth = 100;
+        coins.create(startWidth, startHeight, "coin");
+        startWidth = 500
+        for(let i=0; i<3; i++)
+            coins.create(startWidth+i*50, startHeight, "coin");
 
     }
 
     drawLadders(ladders)
     {
-        let startHeight = config.height - heightOfSingleLadder/2 -  widthOfSingleBlock, startWidth = 300;
+        let startHeight = config.height - heightOfSingleLadder/2 -  widthOfSingleBlock, startWidth = 605;
         //floor 0 to 1
         ladders.create(startWidth, startHeight,"ladder");
-        startWidth=900;
-        ladders.create(startWidth, startHeight,"ladder");
-        startWidth=700;
+        startWidth=830;
         ladders.create(startWidth, startHeight,"ladder");
 
         //floor 1 to 2
         startHeight = startHeight - minBreakBetweenLevels;
-        startWidth=500;
+        startWidth=280;
         ladders.create(startWidth, startHeight,"ladder");
 
         //floor 2 to 3
         startHeight = startHeight - minBreakBetweenLevels;
-        startWidth=350;
+        startWidth=860;
         ladders.create(startWidth, startHeight,"ladder");
 
         //floor 3 to 4 
         startHeight = startHeight - minBreakBetweenLevels;
-        startWidth=150;
+        startWidth=190;
         ladders.create(startWidth, startHeight,"ladder");
         
     }
@@ -654,42 +675,57 @@ class SecondLevel extends FirstLevel
     
     drawCoins(coins)
     {
-        let startHeight = config.height- minBreakBetweenLevels/2, startWidth = 400;
+        let startHeight = config.height- minBreakBetweenLevels/2, startWidth = 500;
         //0 floor
-        for(let i=0; i<1; i++)
-        {
+        for(let i=0; i<3; i++)
             coins.create(startWidth+i*50, startHeight, "coin");
-        }
+        //1 floor
+        startHeight-=minBreakBetweenLevels;
+        coins.create(90, startHeight, "coin");
+        //2 floor
+        startHeight-=minBreakBetweenLevels;
+        startWidth = 65;
+        for(let i=0; i<6; i++)
+            coins.create(startWidth+i*185, startHeight, "coin");
+        //3 floor
+        startHeight-=minBreakBetweenLevels;
+        startWidth = 400;
+        for(let i=0; i<2; i++)
+            coins.create(startWidth+i*50, startHeight, "coin");
+        //4 floor
+        startHeight-=minBreakBetweenLevels;
+        coins.create(100, startHeight, "coin");
+        startWidth = 800
+        for(let i=0; i<2; i++)
+            coins.create(startWidth+i*50, startHeight, "coin");
 
     }
 
     drawLadders(ladders)
     {
-        let startHeight = config.height - heightOfSingleLadder/2 -  widthOfSingleBlock, startWidth = 280;
+        let startHeight = config.height - heightOfSingleLadder/2 -  widthOfSingleBlock, startWidth = 320;
         //floor 0 to 1
         ladders.create(startWidth, startHeight,"ladder");
-        startWidth=880;
+        startWidth=1010;
         ladders.create(startWidth, startHeight,"ladder");
 
         //floor 1 to 2
         startHeight = startHeight - minBreakBetweenLevels;
-        startWidth=100;
+        startWidth=125;
         ladders.create(startWidth, startHeight,"ladder");
-        startWidth=940;
+        startWidth=920;
         ladders.create(startWidth, startHeight,"ladder");
 
         //floor 2 to 3
         startHeight = startHeight - minBreakBetweenLevels;
-        startWidth=400;
-        ladders.create(startWidth, startHeight,"ladder");
-        startWidth=990;
+        startWidth=840;
         ladders.create(startWidth, startHeight,"ladder");
 
         //floor 3 to 4 
         startHeight = startHeight - minBreakBetweenLevels;
-        startWidth=150;
+        startWidth=190;
         ladders.create(startWidth, startHeight,"ladder");
-        startWidth=900;
+        startWidth=930;
         ladders.create(startWidth, startHeight,"ladder");
         
     }
@@ -784,36 +820,54 @@ class ThirdLevel extends FirstLevel
 
     drawCoins(coins)
     {
-        let startHeight = config.height- minBreakBetweenLevels/2, startWidth = 400;
+        let startHeight = config.height- minBreakBetweenLevels/2, startWidth = 1000;
         //0 floor
-        for(let i=0; i<1; i++)
-        {
+        for(let i=0; i<2; i++)
             coins.create(startWidth+i*50, startHeight, "coin");
-        }
+        //1 floor
+        startHeight-=minBreakBetweenLevels;
+        startWidth = 65
+        for(let i=0; i<6; i++)
+            coins.create(startWidth+i*184, startHeight, "coin");
+        //2 floor
+        startHeight-=minBreakBetweenLevels;
+        startWidth = 65;
+        for(let i=0; i<3; i++)
+            coins.create(startWidth+i*50, startHeight, "coin");
+        //3 floor
+        startHeight-=minBreakBetweenLevels;
+        //4 floor
+        startHeight-=minBreakBetweenLevels;
+        startWidth = 80
+        for(let i=0; i<2; i++)
+            coins.create(startWidth+i*50, startHeight, "coin");
+        startWidth = 800
+        for(let i=0; i<2; i++)
+            coins.create(startWidth+i*50, startHeight, "coin");
 
     }
 
     drawLadders(ladders)
     {
-        let startHeight = config.height - heightOfSingleLadder/2 -  widthOfSingleBlock, startWidth = 290;
+        let startHeight = config.height - heightOfSingleLadder/2 -  widthOfSingleBlock, startWidth = 310;
         //floor 0 to 1
         ladders.create(startWidth, startHeight,"ladder");
-        startWidth=750;
+        startWidth=735;
         ladders.create(startWidth, startHeight,"ladder");
 
         //floor 1 to 2
         startHeight = startHeight - minBreakBetweenLevels;
-        startWidth=450;
+        startWidth=550;
         ladders.create(startWidth, startHeight,"ladder");
 
         //floor 2 to 3
         startHeight = startHeight - minBreakBetweenLevels;
-        startWidth=680;
+        startWidth=690;
         ladders.create(startWidth, startHeight,"ladder");
 
         //floor 3 to 4 
         startHeight = startHeight - minBreakBetweenLevels;
-        startWidth=580;
+        startWidth=550;
         ladders.create(startWidth, startHeight,"ladder");
         
     }
