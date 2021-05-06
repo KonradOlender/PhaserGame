@@ -53,7 +53,7 @@ class FirstLevel extends Phaser.Scene{
         this.load.image("background", "background.png")
         this.load.image("platform", "platform.png")
         
-        this.load.image("coin", "coin.png", {
+        this.load.spritesheet("coin", "coin.png", {
             frameWidth: 32,
             frameHeight: 32
         });
@@ -187,6 +187,9 @@ class FirstLevel extends Phaser.Scene{
 
     update()
     {
+        Phaser.Actions.Call(coins.getChildren(), child => {
+            child.anims.play('flipingCoin', true);
+        });
         //coins.anims.play("flipingCoin", true);
         if(playerControlKeys.left.isDown)
         {
