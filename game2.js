@@ -15,11 +15,8 @@ var jumpVelocity = -200, playerMovementVelocity = 200, playerFacingLeft = false,
 var minNumberOfCoins = 15;
 var currentLevel = 1;
 var numberOfCoinsText;
-<<<<<<< HEAD
 var enemievelocity = 80;
-=======
 var level;
->>>>>>> 908be43867d634ceb78f7393880b7aa07ec01489
 
 //----------------------------------------------------------------------------------------------------------> First Level
 class FirstLevel extends Phaser.Scene{
