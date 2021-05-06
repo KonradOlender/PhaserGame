@@ -1,7 +1,8 @@
 var gameSpace = document.getElementById("game");
 //game objects
 var player, platforms;
-var door, ladders, coins, bullets;
+var enemies;
+var door, ladders, coins, bullets, bounds;
 var playerControlKeys;
 var sizeOfSingleBlock = 32;
 var minBreakBetweenLevels = 110; //dla swobodnego skoku i chodzenia
@@ -14,6 +15,7 @@ var jumpVelocity = -200, playerMovementVelocity = 200, playerFacingLeft = false,
 var minNumberOfCoins = 15;
 var currentLevel = 1;
 var numberOfCoinsText;
+var enemievelocity = 80;
 
 //----------------------------------------------------------------------------------------------------------> First Level
 class FirstLevel extends Phaser.Scene{
@@ -51,6 +53,7 @@ class FirstLevel extends Phaser.Scene{
             frameHeight: 65,
         })
         this.load.image("background", "background.png")
+        this.load.image("wall", "wall.png")
         this.load.image("platform", "platform.png")
         
         this.load.spritesheet("coin", "coin.png", {
@@ -80,10 +83,19 @@ class FirstLevel extends Phaser.Scene{
         player = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'playerIdle');
         player.body.setCollideWorldBounds(true);
         player.body.setVelocityY(200);
+        //loading enemies
+        enemies = this.physics.add.group()
+        this.placeEnemies();
+        //enemie = this.physics.add.sprite(100, 300, 'playerIdle');
+        
+
         //creating platforms
+        bounds = this.physics.add.staticGroup();
         platforms = this.physics.add.staticGroup();
         this.drawPlatforms(platforms);
         this.physics.add.collider(player, platforms);
+        this.physics.add.collider(enemies, platforms);
+        
 
         //creating door
         //door = this.physics.add.sprite(100,200, 'door');
@@ -216,7 +228,6 @@ class FirstLevel extends Phaser.Scene{
                 player.anims.play("idleRight", true);
             player.setVelocityX(0)
         }
-            
 
         if((playerControlKeys.up.isDown) && player.body.onFloor())
         { this.addCoin();
@@ -238,6 +249,22 @@ class FirstLevel extends Phaser.Scene{
         //this.physics.collide(player, ladders, this.playerIsOnLadder);
         this.physics.overlap(player, ladders, this.playerIsOnLadder);
         this.physics.collide(player, coins, this.playerGetCoin);
+        this.physics.collide(enemies, bounds, this.changeEnemieDirection);
+    }
+
+    changeEnemieDirection(enemie){
+        enemievelocity = enemievelocity * (-1)
+        enemie.setVelocityX(enemievelocity);
+    }
+
+    placeEnemies(){
+        for(let i = 1; i<3; i++){
+            let enemie = enemies.create(i * 100, 300, 'playerIdle')
+            enemie.setCollideWorldBounds = true;
+            enemie.body.setVelocityX(enemievelocity);
+        }
+        
+
     }
 
     playerIsOnLadder(player, ladder)
@@ -288,6 +315,9 @@ class FirstLevel extends Phaser.Scene{
         //0 floor
         for(let i = 0; i < config.width/sizeOfSingleBlock + 1; i++)
         {
+            if(i==0||i==config.width/sizeOfSingleBlock){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2, "wall")
+            }
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
         }
         
@@ -295,11 +325,17 @@ class FirstLevel extends Phaser.Scene{
         startHeight = startHeight - minBreakBetweenLevels;
         for(let i = 2; i < config.width/sizeOfSingleBlock/2 + 1; i++)
         {
+            if(i==2|| i== 18){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2, "wall");
+            }
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
         }
 
         for(let i = 3*(config.width/sizeOfSingleBlock/4) + 1;  i < config.width/sizeOfSingleBlock - 3; i++)
         {
+            if(i== 3*(config.width/sizeOfSingleBlock/4) + 1|| i== 3*(config.width/sizeOfSingleBlock/4) + 5){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2, "wall")
+            }
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
         }
 
@@ -307,6 +343,9 @@ class FirstLevel extends Phaser.Scene{
         startHeight = startHeight - minBreakBetweenLevels;
         for(let i = config.width/sizeOfSingleBlock/4 + 1; i < config.width/sizeOfSingleBlock - 3; i++)
         {
+            if(i == config.width/sizeOfSingleBlock/4 + 1 || i == config.width/sizeOfSingleBlock/4 + 22){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2, "wall")
+            }
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
         }
 
@@ -314,6 +353,9 @@ class FirstLevel extends Phaser.Scene{
         startHeight = startHeight - minBreakBetweenLevels;
         for(let i = 2; i < 3*config.width/sizeOfSingleBlock/4 + 1; i++)
         {
+            if(i == 2 || i == 26){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2, "wall")
+            }
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
         }
 
@@ -331,11 +373,17 @@ class FirstLevel extends Phaser.Scene{
         startHeight = startHeight - minBreakBetweenLevels;
         for(let i = config.width/sizeOfSingleBlock/4 + 1; i < 3*config.width/sizeOfSingleBlock/4 + 1; i++)
         {
+            if(i == config.width/sizeOfSingleBlock/4 + 1 || i == config.width/sizeOfSingleBlock/4 + 18){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2, "wall")
+            }
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
         }
 
         for(let i = 2;  i < config.width/sizeOfSingleBlock/6; i++)
         {
+            if(i == 2 || i == 5){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2, "wall")
+            }
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2 ,"platform");
         }
     }
@@ -350,7 +398,7 @@ class FirstLevel extends Phaser.Scene{
     {
         let startHeight = config.height- minBreakBetweenLevels/2, startWidth = 400;
         //0 floor
-        for(let i=0; i<1; i++)
+        for(let i=0; i<2; i++)
         {
             coins.create(startWidth+i*50, startHeight, "coin");
         }
