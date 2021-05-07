@@ -12,7 +12,7 @@ var spawnPoint = { x:50, y:520 }
 var spawnPointStartScene = { x:50, y:100 }
 //game values
 var jumpVelocity = -200, playerMovementVelocity = 200, playerFacingLeft = false, gameWon = false, gameFinished = false;
-var minNumberOfCoins = 15;
+var minNumberOfCoins = 15, currentNumberOfCoins = 0;
 var currentLevel = 1;
 var numberOfCoinsText;
 var enemievelocity = 80;
@@ -71,7 +71,6 @@ class FirstLevel extends Phaser.Scene{
             super(name);
 
         this.currentNumberOfCoins = 0;
-
         level = this;
         this.bulletsGroup;
     }
@@ -162,7 +161,7 @@ class FirstLevel extends Phaser.Scene{
             numberOfCoinsText = this.add.text(
             0,
             0,
-            `Coins needed to open the door: ${this.currentNumberOfCoins} / ${minNumberOfCoins}` ,
+            `Coins needed to open the door: ${currentNumberOfCoins} / ${minNumberOfCoins}` ,
             {
                 font: "20px Georgia",
                 fill: "#ffd700",
@@ -343,8 +342,11 @@ class FirstLevel extends Phaser.Scene{
 
     playerGetCoin(player, coin)
     {
-        level.addCoin();
+        //addCoin();
         coin.disableBody(true, true);
+        currentNumberOfCoins++;
+        if(currentNumberOfCoins <= minNumberOfCoins)
+            numberOfCoinsText.setText(`Coins needed to open the door: ${currentNumberOfCoins} / ${minNumberOfCoins}`)
     }
     
     playerOpenDoor(player, door)
@@ -514,6 +516,7 @@ class FirstLevel extends Phaser.Scene{
     nextScene()
     {
         gameFinished = false;
+        currentNumberOfCoins = 0;
         this.scene.stop("FirstLevel");
         this.scene.start("SecondLevel");
     }
@@ -671,6 +674,8 @@ class SecondLevel extends FirstLevel
     {
         super("SecondLevel")
         gameFinished=false;
+        level = this;
+        this.bulletsGroup;
     }
 
     drawPlatforms(platforms)
@@ -787,6 +792,7 @@ class SecondLevel extends FirstLevel
     nextScene()
     {
         gameFinished=false;
+        currentNumberOfCoins = 0;
         this.scene.stop("SecondLevel");
         this.scene.start("ThirdLevel");
     }
@@ -805,6 +811,8 @@ class ThirdLevel extends FirstLevel
     {
         super("ThirdLevel")
         gameFinished=false;
+        level = this;
+        this.bulletsGroup;
     }
 
     drawPlatforms(platforms)
