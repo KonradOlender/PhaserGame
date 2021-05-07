@@ -18,6 +18,49 @@ var numberOfCoinsText;
 var enemievelocity = 80;
 var level;
 
+class Bullet extends Phaser.Physics.Arcade.Sprite{
+    constructor(scene, x, y)
+    {
+        super(scene, x, y, 'bullet');
+    }
+
+    fire(x, y, side)
+    {
+        this.body.reset(x,y);
+        this.setActive(true);
+        this.setVisible(true);
+        if(side)
+            this.setVelocityX(-500);
+        else this.setVelocityX(500);
+    }
+}
+
+class BulletsGroup extends Phaser.Physics.Arcade.Group
+{
+    constructor(scene) 
+    {
+        super(scene.physics.world, scene);
+
+        this.createMultiple({
+            classType: Bullet,
+            frameQuantity: 1000,
+            active: false,
+            visible: false,
+            key: 'bullet'
+        })
+    }
+
+    fireBullet(x, y, side)
+    {
+        const bullet = this.getFirstDead(false);
+        if(bullet)
+        {
+            bullet.fire(x, y, side);
+        }
+    }
+}
+
+
 //----------------------------------------------------------------------------------------------------------> First Level
 class FirstLevel extends Phaser.Scene{
     constructor (name = null)
@@ -28,7 +71,9 @@ class FirstLevel extends Phaser.Scene{
             super(name);
 
         this.currentNumberOfCoins = 0;
+
         level = this;
+        this.bulletsGroup;
     }
     preload()
     {
@@ -110,6 +155,7 @@ class FirstLevel extends Phaser.Scene{
         this.drawCoins(coins);
         //creating bullets
         bullets = this.physics.add.staticGroup();
+        this.bulletsGroup = new BulletsGroup(this);
         
         //this.physics.add.collider(player, ladders, playerIsOnLadder);
         //
@@ -255,6 +301,12 @@ class FirstLevel extends Phaser.Scene{
         this.physics.collide(enemies, bounds, this.changeEnemieDirection);
     }
 
+    shoot(side)
+    {
+        if(side) this.bulletsGroup.fireBullet(player.x - 25, player.y - 16, side);
+        else this.bulletsGroup.fireBullet(player.x + 25, player.y - 16, side);
+    }
+
     changeEnemieDirection(enemie){
         enemievelocity = enemievelocity * (-1)
         enemie.setVelocityX(enemievelocity);
@@ -311,10 +363,15 @@ class FirstLevel extends Phaser.Scene{
         {
             if(playerFacingLeft)
             {
+                this.shoot(true);
+
                 player.anims.play("shootingLeft", true);
             }
             else
+            {
+                this.shoot(false);
                 player.anims.play("shootingRight", true);
+            }
 
         }
     }
@@ -456,6 +513,7 @@ class FirstLevel extends Phaser.Scene{
 
     nextScene()
     {
+        gameFinished = false;
         this.scene.stop("FirstLevel");
         this.scene.start("SecondLevel");
     }
@@ -612,6 +670,7 @@ class SecondLevel extends FirstLevel
     constructor()
     {
         super("SecondLevel")
+        gameFinished=false;
     }
 
     drawPlatforms(platforms)
@@ -727,6 +786,7 @@ class SecondLevel extends FirstLevel
 
     nextScene()
     {
+        gameFinished=false;
         this.scene.stop("SecondLevel");
         this.scene.start("ThirdLevel");
     }
@@ -744,6 +804,7 @@ class ThirdLevel extends FirstLevel
     constructor()
     {
         super("ThirdLevel")
+        gameFinished=false;
     }
 
     drawPlatforms(platforms)
