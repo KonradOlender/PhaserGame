@@ -29,14 +29,10 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
         this.body.reset(x,y);
         this.setActive(true);
         this.setVisible(true);
-        this.body.world.gravity.y = 0;
-        this.body.gravity.y = 0;
         
-        console.log(this)
-        console.log(this.body.world.gravity.y)
         if(side)
-            this.setVelocityX(-500);
-        else this.setVelocityX(500);
+            this.setVelocityX(-600);
+        else this.setVelocityX(600);
     }
 }
 
@@ -133,6 +129,8 @@ class FirstLevel extends Phaser.Scene{
         player = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'playerIdle');
         player.body.setCollideWorldBounds(true);
         player.body.setVelocityY(200);
+        player.body.gravity.y = 500;
+        //this.body.gravity.y = 0;
         //loading enemies
         enemies = this.physics.add.group()
         this.placeEnemies();
@@ -149,6 +147,7 @@ class FirstLevel extends Phaser.Scene{
 
         //creating door
         door = this.physics.add.sprite(1060, spawnPoint.y, 'door');
+        door.body.gravity.y = 500;
         this.physics.add.collider(door,platforms);
         //creating ladder
         ladders = this.physics.add.staticGroup();
@@ -279,7 +278,7 @@ class FirstLevel extends Phaser.Scene{
 
         if(playerControlKeys.up.isDown)
         {
-            if(playerCollideLadder) {this.climb(); console.log("climb")}
+            if(playerCollideLadder) this.climb(); 
             else if(player.body.onFloor()) player.setVelocityY(jumpVelocity);
         }
         if(playerControlKeys.down.isDown && playerCollideLadder)
@@ -339,6 +338,7 @@ class FirstLevel extends Phaser.Scene{
             let enemie = enemies.create(i * 100, 300, 'playerIdle')
             enemie.setCollideWorldBounds = true;
             enemie.body.setVelocityX(enemievelocity);
+            enemie.body.gravity.y = 500;
         }
         
 
@@ -353,17 +353,17 @@ class FirstLevel extends Phaser.Scene{
 
     climb()
     {
-        player.body.world.gravity.y = 0;
+        player.body.gravity.y = 0;
         player.y--;
     }
     climbDown()
     {
-        player.body.world.gravity.y = 0;
+        player.body.gravity.y = 0;
         player.y++;
     }
     noClimb()
     {
-        player.body.world.gravity.y = 500;
+        player.body.gravity.y = 500;
     }
 
     playerGetCoin(player, coin)
@@ -662,6 +662,7 @@ class EndWindow extends Phaser.Scene{
         player = this.physics.add.sprite(1000, 0, 'playerIdle');
         player.body.setCollideWorldBounds(true);
         player.body.setVelocityY(200);
+        player.body.gravity.y = 500;
         //creating platforms
         platforms = this.physics.add.staticGroup();
         this.drawPlatforms(platforms);
@@ -974,7 +975,7 @@ var config = {
         default: 'arcade', 
         arcade: {
             gravity: {
-                y: 500
+                y: 0
             },
         }
     },
