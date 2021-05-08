@@ -16,7 +16,6 @@ var minNumberOfCoins = 15, currentNumberOfCoins = 0;
 var currentLevel = 1;
 var numberOfCoinsText;
 var enemievelocity = 80;
-var level;
 var playerCollideLadder= false;
 
 class Bullet extends Phaser.Physics.Arcade.Sprite{
@@ -77,7 +76,6 @@ class FirstLevel extends Phaser.Scene{
             super(name);
 
         this.currentNumberOfCoins = 0;
-        level = this;
         this.bulletsGroup;
     }
     preload()
@@ -701,7 +699,6 @@ class SecondLevel extends FirstLevel
     {
         super("SecondLevel")
         gameFinished=false;
-        level = this;
         this.bulletsGroup;
     }
 
@@ -838,7 +835,6 @@ class ThirdLevel extends FirstLevel
     {
         super("ThirdLevel")
         gameFinished=false;
-        level = this;
         this.bulletsGroup;
     }
 
