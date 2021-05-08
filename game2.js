@@ -116,7 +116,7 @@ class FirstLevel extends Phaser.Scene{
         })*/
         
         //nie moglam znalezc drzwi - na razie jest cokolwiek XD
-        this.load.image("door", "mushroom.png")
+        this.load.image("door", "door.png")
 
     }
 
