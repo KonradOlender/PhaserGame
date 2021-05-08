@@ -17,6 +17,7 @@ var currentLevel = 1;
 var numberOfCoinsText;
 var enemievelocity = 80;
 var level;
+var playerCollideLadder= false;
 
 class Bullet extends Phaser.Physics.Arcade.Sprite{
     constructor(scene, x, y)
@@ -29,6 +30,11 @@ class Bullet extends Phaser.Physics.Arcade.Sprite{
         this.body.reset(x,y);
         this.setActive(true);
         this.setVisible(true);
+        this.body.world.gravity.y = 0;
+        this.body.gravity.y = 0;
+        
+        console.log(this)
+        console.log(this.body.world.gravity.y)
         if(side)
             this.setVelocityX(-500);
         else this.setVelocityX(500);
@@ -273,11 +279,23 @@ class FirstLevel extends Phaser.Scene{
             player.setVelocityX(0)
         }
 
-        if((playerControlKeys.up.isDown) && player.body.onFloor())
+        if(playerControlKeys.up.isDown)
         {
-            player.setVelocityY(jumpVelocity)
+            if(playerCollideLadder) {this.climb(); console.log("climb")}
+            else if(player.body.onFloor()) player.setVelocityY(jumpVelocity);
+        }
+        if(playerControlKeys.down.isDown && playerCollideLadder)
+        {
+            this.climbDown();
         }
         this.playShootingAnimation();
+
+        if(playerControlKeys.shift.isDown)
+        {
+            //zmienic pozniej na if((playerControlKeys.up.isDown) && this.currentNumberOfCoins == this.minNumberOfConis)
+            if(currentNumberOfCoins >=0) this.physics.overlap(player, door, this.playerOpenDoor);
+        }
+
 
         if(gameFinished)//level finsihed or sth like that
         {
@@ -289,21 +307,28 @@ class FirstLevel extends Phaser.Scene{
             this.gameOver();
         }
 
-        //zmienic pozniej na if((playerControlKeys.up.isDown) && this.currentNumberOfCoins == this.minNumberOfConis)
-        if((playerControlKeys.up.isDown) && this.currentNumberOfCoins >=0)
-        {
-            this.physics.overlap(player, door, this.playerOpenDoor);
-        }
         
-        this.physics.overlap(player, ladders, this.playerIsOnLadder);
+        if(this.physics.overlap(player, ladders)) this.physics.overlap(player, ladders, this.playerIsOnLadder)
+            else 
+            {
+                playerCollideLadder = false;
+                this.noClimb();
+            }
         this.physics.collide(player, coins, this.playerGetCoin);
         this.physics.collide(enemies, bounds, this.changeEnemieDirection);
+        this.physics.collide(bullets, enemies, this.killEnemie);
     }
 
     shoot(side)
     {
         if(side) this.bulletsGroup.fireBullet(player.x - 25, player.y - 16, side);
         else this.bulletsGroup.fireBullet(player.x + 25, player.y - 16, side);
+    }
+
+    killEnemie(bullet, enemie)
+    {
+        bullet.disableBody(true, true);
+        enemie.disableBody(true, true);
     }
 
     changeEnemieDirection(enemie){
@@ -325,19 +350,22 @@ class FirstLevel extends Phaser.Scene{
 
     playerIsOnLadder(player, ladder)
     {
-        /*if(playerControlKeys.up.isDown)
-        {
-            //player.body.velocity.y --;
-            player.setVelocityY = player.setVelocityY--;
-            //player.body.y--;
-        }
-        else if (playerControlKeys.down.isDown)
-            player.body.y++; 
-        else 
-        {
-            player.body.gravity.y = 0;
-            player.body.velocity.y = 0;
-        }*/
+        playerCollideLadder = true;
+    }
+
+    climb()
+    {
+        player.body.world.gravity.y = 0;
+        player.y--;
+    }
+    climbDown()
+    {
+        player.body.world.gravity.y = 0;
+        player.y++;
+    }
+    noClimb()
+    {
+        player.body.world.gravity.y = 500;
     }
 
     playerGetCoin(player, coin)
@@ -366,7 +394,6 @@ class FirstLevel extends Phaser.Scene{
             if(playerFacingLeft)
             {
                 this.shoot(true);
-
                 player.anims.play("shootingLeft", true);
             }
             else
