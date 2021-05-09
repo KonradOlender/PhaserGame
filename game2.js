@@ -570,6 +570,7 @@ class StartWindow extends Phaser.Scene{
             super("StartWindow");
         else
             super(name);
+
     }
 
     preload()
@@ -582,6 +583,7 @@ class StartWindow extends Phaser.Scene{
         })
         this.load.image("background", "background.png")
         this.load.image("platform", "platform.png")
+        this.load.image("bubble", "bubble.png")
     }
 
     create()
@@ -591,7 +593,7 @@ class StartWindow extends Phaser.Scene{
         image.setScale(0.6);
         //loading player
         playerControlKeys = this.input.keyboard.createCursorKeys();
-        player = this.physics.add.sprite(this.physics.world.bounds.centerX, this.physics.world.bounds.centerY, 'playerIdle');
+        player = this.physics.add.sprite(this.physics.world.bounds.centerX/2, this.physics.world.bounds.centerY/2, 'playerIdle');
         player.body.setCollideWorldBounds(true);
         player.body.setVelocityY(200);
         //creating platforms
@@ -599,18 +601,41 @@ class StartWindow extends Phaser.Scene{
         this.drawPlatforms(platforms);
         this.physics.add.collider(player, platforms);
         //play button
+        let currentIndex = 0;
+        let dialogMessages =[
+            "Click ENTER through whole tutorial",
+            "Hi! Now you will learn how to control the player",
+            "To move to the sides press arrows left or right",
+            "To jump press up arrow",
+            "To climb a ladder you shoud use up and down arrows",
+            "To shoot you should press space",
+            "To advance to another level you sholud collect all the coins",
+            "When you collect enough coins the doors will open, then press shift to enter",
+            "Remember to avoid contact with enemies, if they touch you, you will die",
+            "GOooOoOoOOoD LUCK!",
+            "When you are ready to start a game press SPACE"
+        ];
+        let bubble = this.add.image(500, 250, "bubble");
         let startGameText = this.add.text(
-            this.physics.world.bounds.centerX/2 - 100,
-            this.physics.world.bounds.centerY - 100,
-            'To start a game press SPACE',
+            280,
+            130,
+            dialogMessages[0],
             {
-                font: "60px Georgia",
+                font: "40px Georgia",
                 fill: "#ffffff",
                 align: "center"
             }
         );
         startGameText.visible = true;
-           
+        startGameText.setWordWrapWidth(480);
+
+        this.input.keyboard.on('keydown-ENTER', function (event) {
+            if(currentIndex == dialogMessages.length)
+                currentIndex = 0;
+            else
+                currentIndex ++;
+            startGameText.setText(dialogMessages[currentIndex]);
+        });
     }
 
     drawPlatforms(platforms)
@@ -640,6 +665,12 @@ class EndWindow extends Phaser.Scene{
     constructor ()
     {
         super("EndWindow");
+        this.dialogMessages =[
+            "Hi!",
+            gameWon ? "Congrats you won!" : "Unfortuantely you lost",
+            "Hope you had fun playing it!",
+            "Do you want to play again?"
+        ];
     }
 
     preload()
