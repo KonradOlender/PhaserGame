@@ -629,11 +629,9 @@ class StartWindow extends Phaser.Scene{
         startGameText.visible = true;
         startGameText.setWordWrapWidth(480);
 
-        this.input.keyboard.on('keydown-ENTER', function (event) {
-            if(currentIndex == dialogMessages.length)
-                currentIndex = 0;
-            else
-                currentIndex ++;
+        this.input.keyboard.on('keydown-ENTER', function () {
+            currentIndex ++
+            currentIndex = currentIndex % dialogMessages.length;
             startGameText.setText(dialogMessages[currentIndex]);
         });
     }
@@ -665,12 +663,6 @@ class EndWindow extends Phaser.Scene{
     constructor ()
     {
         super("EndWindow");
-        this.dialogMessages =[
-            "Hi!",
-            gameWon ? "Congrats you won!" : "Unfortuantely you lost",
-            "Hope you had fun playing it!",
-            "Do you want to play again?"
-        ];
     }
 
     preload()
@@ -687,6 +679,13 @@ class EndWindow extends Phaser.Scene{
 
     create()
     {
+        let dialogMessages =[
+            "Hi!",
+            gameWon ? "Congrats you won!" : "Unfortuantely you lost",
+            "Hope you had fun playing it!",
+            "Do you want to play again? Reload the page!"
+        ];
+        let currentIndex = 0;
         //setting up a world
         let image = this.add.image(0, 0, "background").setOrigin(0,0);
         image.setScale(0.6);
@@ -700,19 +699,28 @@ class EndWindow extends Phaser.Scene{
         platforms = this.physics.add.staticGroup();
         this.drawPlatforms(platforms);
         this.physics.add.collider(player, platforms);
-        //play button
+    
+        let bubble = this.add.image(875, 125, "bubble");
+        bubble.setScale(0.4);
+        bubble.flipX = !bubble.flipX;
         let endgameMessage = this.add.text(
-            this.physics.world.bounds.centerX/2 - 100,
-            this.physics.world.bounds.centerY - 100,
-            gameWon ? "Congratutaltions!" : "Refresh and start again!",
+            790,
+            75,
+            dialogMessages[currentIndex],
             {
-                font: "60px Georgia",
+                font: "20px Georgia",
                 fill: "#ffffff",
                 align: "center"
             }
         );
         endgameMessage.visible = true;
-           
+        endgameMessage.setWordWrapWidth(180);
+
+        this.input.keyboard.on('keydown-ENTER', function () {
+            currentIndex ++
+            currentIndex = currentIndex % dialogMessages.length;
+            endgameMessage.setText(dialogMessages[currentIndex]);
+        });
     }
 
     drawPlatforms(platforms)
