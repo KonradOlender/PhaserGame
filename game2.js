@@ -130,6 +130,8 @@ class FirstLevel extends Phaser.Scene{
         player.body.setCollideWorldBounds(true);
         player.body.setVelocityY(200);
         player.body.gravity.y = 500;
+        //player always in front
+        player.depth = 100;
         //this.body.gravity.y = 0;
         //loading enemies
         enemies = this.physics.add.group()
@@ -161,7 +163,7 @@ class FirstLevel extends Phaser.Scene{
         
         //this.physics.add.collider(player, ladders, playerIsOnLadder);
         //
-            numberOfCoinsText = this.add.text(
+        numberOfCoinsText = this.add.text(
             0,
             0,
             `Coins needed to open the door: ${currentNumberOfCoins} / ${minNumberOfCoins}` ,
@@ -333,16 +335,14 @@ class FirstLevel extends Phaser.Scene{
         enemie.setVelocityX(enemievelocity);
     }
 
-    placeEnemies(){
+    placeEnemies()
+    {
         for(let i = 1; i<3; i++){
             let enemie = enemies.create(i * 100, 300, 'playerIdle')
             enemie.setCollideWorldBounds = true;
             enemie.body.setVelocityX(enemievelocity);
             enemie.body.gravity.y = 500;
         }
-        
-
-
         
     }
 
@@ -356,11 +356,13 @@ class FirstLevel extends Phaser.Scene{
         player.body.gravity.y = 0;
         player.y--;
     }
+
     climbDown()
     {
         player.body.gravity.y = 0;
         player.y++;
     }
+
     noClimb()
     {
         player.body.gravity.y = 500;
