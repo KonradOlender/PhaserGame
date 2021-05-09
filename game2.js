@@ -98,6 +98,18 @@ class FirstLevel extends Phaser.Scene{
             frameWidth: 82,
             frameHeight: 65,
         })
+
+        //enemie
+        this.load.spritesheet("enemieMovementRight", "rightEnemieMovement.png", {
+            frameWidth: 44,
+            frameHeight: 65,
+        })
+        this.load.spritesheet("enemieMovementLeft", "leftEnemieMovement.png", {
+            frameWidth: 44,
+            frameHeight: 65,
+        })
+
+
         this.load.image("background", "background.png")
         this.load.image("wall", "wall.png")
         this.load.image("platform", "platform.png")
@@ -146,6 +158,7 @@ class FirstLevel extends Phaser.Scene{
         this.physics.add.collider(player, platforms);
         this.physics.add.collider(enemies, platforms);
         
+        
 
         //creating door
         door = this.physics.add.sprite(1060, spawnPoint.y, 'door');
@@ -188,6 +201,7 @@ class FirstLevel extends Phaser.Scene{
                 repeat: -1
             }
         );
+        
 
         this.anims.create({
                 key: "idleLeft",
@@ -236,6 +250,28 @@ class FirstLevel extends Phaser.Scene{
             }
         );
 
+        //enemie animations
+        this.anims.create({
+                key: "enemieLeftMovement",
+                frames: this.anims.generateFrameNumbers('enemieMovementLeft', {
+                    start: 0,
+                    end: 7,
+                }),
+                frameRate: 10,
+                repeat: -1
+            }
+        );
+        this.anims.create({
+                key: "enemieRightMovement",
+                frames: this.anims.generateFrameNumbers('enemieMovementRight', {
+                    start: 0,
+                    end: 7,
+                }),
+                frameRate: 10,
+                repeat: -1
+            }
+        );
+
         this.anims.create({
                 key: "flipingCoin",
                 frames: this.anims.generateFrameNumbers('coin', {
@@ -244,6 +280,10 @@ class FirstLevel extends Phaser.Scene{
             }),
             frameRate: 5,
             repeat: -1
+        });
+
+        Phaser.Actions.Call(enemies.getChildren(), child => {
+            child.anims.play('enemieRightMovement', true);
         });
 
     }
@@ -295,7 +335,6 @@ class FirstLevel extends Phaser.Scene{
             if(currentNumberOfCoins >=0) this.physics.overlap(player, door, this.playerOpenDoor);
         }
 
-
         if(gameFinished)//level finsihed or sth like that
         {
             this.nextScene();
@@ -315,7 +354,8 @@ class FirstLevel extends Phaser.Scene{
             }
         this.physics.collide(player, coins, this.playerGetCoin);
         this.physics.collide(enemies, bounds, this.changeEnemieDirection);
-        this.physics.collide(bullets, enemies, this.killEnemie);
+        this.physics.collide(enemies, player, this.gameOver);
+        this.physics.collide(this.bulletsGroup, enemies, this.killEnemie);
     }
 
     shoot(side)
@@ -326,6 +366,7 @@ class FirstLevel extends Phaser.Scene{
 
     killEnemie(bullet, enemie)
     {
+        console.log("hit");
         bullet.disableBody(true, true);
         enemie.disableBody(true, true);
     }
@@ -333,6 +374,13 @@ class FirstLevel extends Phaser.Scene{
     changeEnemieDirection(enemie){
         enemievelocity = enemievelocity * (-1)
         enemie.setVelocityX(enemievelocity);
+        if(enemievelocity > 0){
+            enemie.anims.play('enemieRightMovement', true);
+        }
+        else{
+            enemie.anims.play('enemieLeftMovement', true);
+        }
+        
     }
 
     placeEnemies()
