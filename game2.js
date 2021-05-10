@@ -11,7 +11,7 @@ var heightOfSingleLadder = 170;
 var spawnPoint = { x:50, y:520 }
 var spawnPointStartScene = { x:50, y:100 }
 //game values
-var jumpVelocity = -200, playerMovementVelocity = 200, playerFacingLeft = false, gameWon = false, gameFinished = false;
+var jumpVelocity = -200, playerMovementVelocity = 200, playerFacingLeft = false, gameWon = true, gameFinished = false;
 var minNumberOfCoins = 15, currentNumberOfCoins = 0;
 var currentLevel = 1;
 var numberOfCoinsText;
@@ -137,6 +137,35 @@ class FirstLevel extends Phaser.Scene{
         //setting up a world
         let image = this.add.image(0, 0, "background").setOrigin(0,0);
         image.setScale(0.6);
+
+
+        let bubble = this.add.image(875, 450, "bubble");
+        bubble.setScale(0.45);
+        bubble.flipX = !bubble.flipX;
+        bubble.visible = false;
+        bubble.depth = 100;
+        let infoText = this.add.text(
+            790,
+            375,
+            "You can only come in when you've collected all the coins needed - ENTER to hide the bubble",
+            {
+                font: "18px Georgia",
+                fill: "#ffffff",
+                align: "center"
+            }
+        );
+        infoText.visible = false;
+        infoText.depth = 100;
+        infoText.setWordWrapWidth(180);
+
+        this.bubble = bubble;
+        this.infoText = infoText;
+        
+        this.input.keyboard.on('keydown-ENTER', function () {
+            infoText.visible = false;
+            bubble.visible = false;
+        });
+
         //loading player
         player = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'playerIdle');
         player.body.setCollideWorldBounds(true);
@@ -332,20 +361,22 @@ class FirstLevel extends Phaser.Scene{
         if(playerControlKeys.shift.isDown)
         {
             //zmienic pozniej na if((playerControlKeys.up.isDown) && this.currentNumberOfCoins == this.minNumberOfConis)
-            if(currentNumberOfCoins >=0) this.physics.overlap(player, door, this.playerOpenDoor);
+            //if(currentNumberOfCoins >=0) 
+            if(currentNumberOfCoins == minNumberOfCoins)
+            {
+                this.physics.overlap(player, door, this.playerOpenDoor);
+            }
+            else
+            {
+                this.bubble.visible = true;
+                this.infoText.visible = true;
+            }
         }
-
-        if(gameFinished)//level finsihed or sth like that
-        {
-            this.nextScene();
-        }
-
-        if(false)//lost level
-        {
-            this.gameOver();
-        }
-
         
+        //level finsihed or sth like that
+        if(gameFinished)    this.nextScene();
+        if(!gameWon)    this.gameOver();
+
         if(this.physics.overlap(player, ladders)) this.physics.overlap(player, ladders, this.playerIsOnLadder)
             else 
             {
@@ -354,7 +385,7 @@ class FirstLevel extends Phaser.Scene{
             }
         this.physics.collide(player, coins, this.playerGetCoin);
         this.physics.collide(enemies, bounds, this.changeEnemieDirection);
-        this.physics.collide(enemies, player, this.gameOver);
+        this.physics.collide(enemies, player, this.playerDies);
         this.physics.collide(this.bulletsGroup, enemies, this.killEnemie);
     }
 
@@ -362,6 +393,11 @@ class FirstLevel extends Phaser.Scene{
     {
         if(side) this.bulletsGroup.fireBullet(player.x - 25, player.y - 16, side);
         else this.bulletsGroup.fireBullet(player.x + 25, player.y - 16, side);
+    }
+
+    playerDies()
+    {
+        gameWon = false;
     }
 
     killEnemie(bullet, enemie)
@@ -598,6 +634,7 @@ class FirstLevel extends Phaser.Scene{
 
     gameOver()
     {
+        console.log(this)
         this.scene.stop("FirstLevel");
         this.scene.start("EndWindow");
     }
@@ -731,7 +768,8 @@ class EndWindow extends Phaser.Scene{
             "Hi!",
             gameWon ? "Congrats you won!" : "Unfortuantely you lost",
             "Hope you had fun playing it!",
-            "Do you want to play again? Reload the page!"
+            "Do you want to play again? Reload the page!",
+            "THANK YOU FOR PLAYING"
         ];
         let currentIndex = 0;
         //setting up a world
@@ -783,6 +821,7 @@ class EndWindow extends Phaser.Scene{
 
 }
 
+//--------------------------------------------------------------------------------------------------------------------> Second Level
 class SecondLevel extends FirstLevel
 {
     constructor()
@@ -918,7 +957,7 @@ class SecondLevel extends FirstLevel
     }
 }
 
-
+//--------------------------------------------------------------------------------------------------------------------> Third Level
 class ThirdLevel extends FirstLevel
 {
     constructor()
