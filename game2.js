@@ -11,7 +11,7 @@ var heightOfSingleLadder = 170;
 var spawnPoint = { x:50, y:520 }
 var spawnPointStartScene = { x:50, y:100 }
 //game values
-var jumpVelocity = -200, playerMovementVelocity = 200, playerFacingLeft = false, gameWon = true, gameFinished = false;
+var jumpVelocity = -200, playerMovementVelocity = 300, playerFacingLeft = false, gameWon = true, gameFinished = false;
 var minNumberOfCoins = 15, currentNumberOfCoins = 0;
 var currentLevel = 1;
 var numberOfCoinsText;
@@ -322,6 +322,19 @@ class FirstLevel extends Phaser.Scene{
         Phaser.Actions.Call(coins.getChildren(), child => {
             child.anims.play('flipingCoin', true);
         });
+
+        Phaser.Actions.Call(enemies.getChildren(), child => {
+            if(child.y == player.y){
+                if(child.x < player.x){
+                    child.setVelocityX(80);
+                    child.anims.play('enemieRightMovement', true);
+                }
+                else if(child.x > player.x){
+                    child.setVelocityX(-80);
+                    child.anims.play('enemieLeftMovement', true);
+                }
+            }
+        });
         
         if(playerControlKeys.left.isDown)
         {
@@ -387,6 +400,8 @@ class FirstLevel extends Phaser.Scene{
         this.physics.collide(enemies, bounds, this.changeEnemieDirection);
         this.physics.collide(enemies, player, this.playerDies);
         this.physics.collide(this.bulletsGroup, enemies, this.killEnemie);
+
+        if(playerControlKeys.shift.isDown) this.nextScene();
     }
 
     shoot(side)
@@ -422,11 +437,22 @@ class FirstLevel extends Phaser.Scene{
     placeEnemies()
     {
         for(let i = 1; i<3; i++){
-            let enemie = enemies.create(i * 100, 300, 'playerIdle')
+            let enemie = enemies.create(i * 100, 100, 'playerIdle')
             enemie.setCollideWorldBounds = true;
             enemie.body.setVelocityX(enemievelocity);
             enemie.body.gravity.y = 500;
         }
+        for(let i = 1; i<2; i++){
+            let enemie = enemies.create(100, 400, 'playerIdle')
+            enemie.setCollideWorldBounds = true;
+            enemie.body.setVelocityX(enemievelocity);
+            enemie.body.gravity.y = 500;
+        }
+        
+        let enemie = enemies.create(500, 300, 'playerIdle')
+        enemie.setCollideWorldBounds = true;
+        enemie.body.setVelocityX(enemievelocity);
+        enemie.body.gravity.y = 500;
         
     }
 
@@ -438,13 +464,13 @@ class FirstLevel extends Phaser.Scene{
     climb()
     {
         player.body.gravity.y = 0;
-        player.y--;
+        player.y -= 3;
     }
 
     climbDown()
     {
         player.body.gravity.y = 0;
-        player.y++;
+        player.y +=3;
     }
 
     noClimb()
@@ -838,6 +864,9 @@ class SecondLevel extends FirstLevel
         for(let i = 0; i < config.width/sizeOfSingleBlock + 1; i++)
         {
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+            if(i == 0 || i == config.width/sizeOfSingleBlock){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"wall");
+            }
         }
         
         // first floor
@@ -845,11 +874,17 @@ class SecondLevel extends FirstLevel
         for(let i = 2; i < config.width/sizeOfSingleBlock/4 + 1; i++)
         {
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+            if(i == 2 || i == 9){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"wall");
+            }
         }
 
         for(let i = 3*(config.width/sizeOfSingleBlock/4) + 1;  i < config.width/sizeOfSingleBlock - 3; i++)
         {
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+            if(i == 3*(config.width/sizeOfSingleBlock/4) + 1 ||i == 3*(config.width/sizeOfSingleBlock/4) + 5){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"wall");
+            }
         }
 
         // second floor
@@ -865,11 +900,17 @@ class SecondLevel extends FirstLevel
         for(let i = 2; i < 2*config.width/sizeOfSingleBlock/5 + 1; i++)
         {
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+            if(i == 2 || i == 14){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"wall");
+            }
         }
 
         for(let i =  4*config.width/sizeOfSingleBlock/5; i < config.width/sizeOfSingleBlock; i++)
         {
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+            if(i == 0 || i == config.width/sizeOfSingleBlock){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"wall");
+            }
         }
 
         //fourth floor
@@ -877,12 +918,43 @@ class SecondLevel extends FirstLevel
         for(let i = config.width/sizeOfSingleBlock/2 + 1; i < 4*config.width/sizeOfSingleBlock/5 + 1; i++)
         {
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+            if(i == config.width/sizeOfSingleBlock/2 + 1 || i == config.width/sizeOfSingleBlock/2 + 11){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"wall");
+            }
         }
 
         for(let i = 2;  i < config.width/sizeOfSingleBlock/6; i++)
         {
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2 ,"platform");
+            if(i == 2 || i == 5){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"wall");
+            }
         }
+    }
+
+    placeEnemies()
+    {
+        for(let i = 1; i<3; i++){
+            let enemie = enemies.create(i * 120, 100, 'playerIdle')
+            enemie.setCollideWorldBounds = true;
+            enemie.body.setVelocityX(enemievelocity);
+            enemie.body.gravity.y = 500;
+        }
+        let enemie1 = enemies.create(150, 400, 'playerIdle')
+        enemie1.setCollideWorldBounds = true;
+        enemie1.body.setVelocityX(enemievelocity);
+        enemie1.body.gravity.y = 500;
+
+        let enemie2 = enemies.create(850, 350, 'playerIdle')
+        enemie2.setCollideWorldBounds = true;
+        enemie2.body.setVelocityX(enemievelocity);
+        enemie2.body.gravity.y = 500;
+
+        let enemie3 = enemies.create(700, 100, 'playerIdle')
+        enemie3.setCollideWorldBounds = true;
+        enemie3.body.setVelocityX(enemievelocity);
+        enemie3.body.gravity.y = 500;
+        
     }
     
     drawCoins(coins)
@@ -989,16 +1061,25 @@ class ThirdLevel extends FirstLevel
         for(let i = 1; i < config.width/sizeOfSingleBlock/2 - 2; i++)
         {
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+            if(i == 1 || i == 15){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"wall");
+            }
         }
         for(let i = config.width/sizeOfSingleBlock/2 + 1; i < config.width/sizeOfSingleBlock - 2; i++)
         {
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+            if(i == config.width/sizeOfSingleBlock/2 + 1 || i == config.width/sizeOfSingleBlock/2 + 15){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"wall");
+            }
         }
         //third floor
         startHeight = startHeight - minBreakBetweenLevels;
         for(let i = 2*config.width/sizeOfSingleBlock/5; i < 3*config.width/sizeOfSingleBlock/5 + 1; i++)
         {
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+            if(i == 2*config.width/sizeOfSingleBlock/5 || i == 2*config.width/sizeOfSingleBlock/5 + 7){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"wall");
+            }
         }
         
         //stairs between third and fourth floor
@@ -1020,12 +1101,52 @@ class ThirdLevel extends FirstLevel
         for(let i = config.width/sizeOfSingleBlock/2 + 1; i < 4*config.width/sizeOfSingleBlock/5 + 1; i++)
         {
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"platform");
+            if(i == config.width/sizeOfSingleBlock/2 + 1 || i == config.width/sizeOfSingleBlock/2 + 11){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"wall");
+            }
         }
 
         for(let i = 2;  i < config.width/sizeOfSingleBlock/6; i++)
         {
             platforms.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2 ,"platform");
+            if(i == 2 || i == 5){
+                bounds.create(startWidth + i*sizeOfSingleBlock, startHeight - widthOfSingleBlock/2,"wall");
+            }
         }
+    }
+
+    placeEnemies()
+    {
+        for(let i = 1; i<3; i++){
+            let enemie = enemies.create(i * 120, 300, 'playerIdle')
+            enemie.setCollideWorldBounds = true;
+            enemie.body.setVelocityX(enemievelocity);
+            enemie.body.gravity.y = 500;
+        }
+        let enemie1 = enemies.create(800, 300, 'playerIdle')
+        enemie1.setCollideWorldBounds = true;
+        enemie1.body.setVelocityX(enemievelocity);
+        enemie1.body.gravity.y = 500;
+
+        let enemie2 = enemies.create(900, 300, 'playerIdle')
+        enemie2.setCollideWorldBounds = true;
+        enemie2.body.setVelocityX(enemievelocity);
+        enemie2.body.gravity.y = 500;
+
+        let enemie3 = enemies.create(600, 200, 'playerIdle')
+        enemie3.setCollideWorldBounds = true;
+        enemie3.body.setVelocityX(enemievelocity);
+        enemie3.body.gravity.y = 500;
+
+        let enemie4 = enemies.create(800, 100, 'playerIdle')
+        enemie4.setCollideWorldBounds = true;
+        enemie4.body.setVelocityX(enemievelocity);
+        enemie4.body.gravity.y = 500;
+
+        let enemie5 = enemies.create(100, 100, 'playerIdle')
+        enemie5.setCollideWorldBounds = true;
+        enemie5.body.setVelocityX(enemievelocity);
+        enemie5.body.gravity.y = 500;
     }
 
     drawCoins(coins)
