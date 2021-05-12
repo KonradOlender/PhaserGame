@@ -388,6 +388,7 @@ class FirstLevel extends Phaser.Scene{
             if(playerCollideLadder) this.climb(); 
             else if(player.body.onFloor()) player.setVelocityY(jumpVelocity);
         }
+
         if(playerControlKeys.down.isDown && playerCollideLadder)
         {
             this.climbDown();
@@ -502,7 +503,6 @@ class FirstLevel extends Phaser.Scene{
 
     playerGetCoin(player, coin)
     {
-        //addCoin();
         coin.disableBody(true, true);
         currentNumberOfCoins++;
         if(currentNumberOfCoins <= minNumberOfCoins)
@@ -513,11 +513,6 @@ class FirstLevel extends Phaser.Scene{
     { 
         console.log(numberOfCoinsText+ " "+ minNumberOfCoins);
         gameFinished = true;
-    }
-
-    playCoinAnimation()
-    {
-        coins.anims.play("flipingCoin", true);
     }
 
     playShootingAnimation()
@@ -688,24 +683,14 @@ class FirstLevel extends Phaser.Scene{
         this.scene.stop("FirstLevel");
         this.scene.start("EndWindow");
     }
-    
-    addCoin()
-    {
-        this.currentNumberOfCoins++;
-        if(this.currentNumberOfCoins <= minNumberOfCoins)
-            numberOfCoinsText.setText(`Coins needed to open the door: ${this.currentNumberOfCoins} / ${minNumberOfCoins}`)
-    }
+
 }
 
 //----------------------------------------------------------------------------------------------------------> Start Window
 class StartWindow extends Phaser.Scene{
-    constructor (name = null)
+    constructor ()
     {
-        if(name == null)
-            super("StartWindow");
-        else
-            super(name);
-
+        super("StartWindow");
     }
 
     preload()
