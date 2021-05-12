@@ -125,15 +125,6 @@ class FirstLevel extends Phaser.Scene{
             frameWidth: 78,
             frameHeight: 75
         });
-        /*mogą się później przydać
-        this.load.image("diamond", "sprites/diamond.png")
-        this.load.coin("explode", "games/invaders/explode.png", {
-            frameWidth: 32,
-            frameHeight: 48,
-        })*/
-        
-        //nie moglam znalezc drzwi - na razie jest cokolwiek XD
-        //this.load.image("door", "door.png")
 
     }
 
@@ -397,8 +388,6 @@ class FirstLevel extends Phaser.Scene{
 
         if(playerControlKeys.shift.isDown)
         {
-            //zmienic pozniej na if((playerControlKeys.up.isDown) && this.currentNumberOfCoins == this.minNumberOfConis)
-            //if(currentNumberOfCoins >=0) 
             if(currentNumberOfCoins == minNumberOfCoins)
             { 
                 this.physics.overlap(player, door, this.playerOpenDoor);
@@ -645,7 +634,7 @@ class FirstLevel extends Phaser.Scene{
 
     drawLadders(ladders)
     {
-        let startHeight = config.height - heightOfSingleLadder/2 -  widthOfSingleBlock, startWidth = 605;
+        let startHeight = config.height - heightOfSingleLadder/1.5 -  widthOfSingleBlock, startWidth = 605;
         //floor 0 to 1
         ladders.create(startWidth, startHeight,"ladder");
         startWidth=830;
@@ -996,7 +985,7 @@ class SecondLevel extends FirstLevel
 
     drawLadders(ladders)
     {
-        let startHeight = config.height - heightOfSingleLadder/2 -  widthOfSingleBlock, startWidth = 320;
+        let startHeight = config.height - heightOfSingleLadder/1.5 -  widthOfSingleBlock, startWidth = 320;
         //floor 0 to 1
         ladders.create(startWidth, startHeight,"ladder");
         startWidth=1010;
@@ -1189,7 +1178,7 @@ class ThirdLevel extends FirstLevel
 
     drawLadders(ladders)
     {
-        let startHeight = config.height - heightOfSingleLadder/2 -  widthOfSingleBlock, startWidth = 310;
+        let startHeight = config.height - heightOfSingleLadder/1.5 -  widthOfSingleBlock, startWidth = 310;
         //floor 0 to 1
         ladders.create(startWidth, startHeight,"ladder");
         startWidth=735;
