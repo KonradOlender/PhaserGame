@@ -11,7 +11,7 @@ var heightOfSingleLadder = 170;
 var spawnPoint = { x:50, y:520 }
 var spawnPointStartScene = { x:50, y:100 }
 //game values
-var jumpVelocity = -200, playerMovementVelocity = 300, playerFacingLeft = false, gameWon = true, gameFinished = false;
+var jumpVelocity = -200, playerMovementVelocity = 200, playerFacingLeft = false, gameWon = true, gameFinished = false;
 var minNumberOfCoins = 15, currentNumberOfCoins = 0;
 var currentLevel = 1;
 var numberOfCoinsText;
@@ -73,6 +73,7 @@ class FirstLevel extends Phaser.Scene{
 
         this.currentNumberOfCoins = 0;
         this.bulletsGroup;
+        this.doorOpen = false;
     }
     preload()
     {
@@ -120,6 +121,10 @@ class FirstLevel extends Phaser.Scene{
         });
         this.load.image("bullet", "bullet.png")
         this.load.image("ladder", "ladder.png")
+        this.load.spritesheet("door", "dooropening.png", {
+            frameWidth: 78,
+            frameHeight: 75
+        });
         /*mogą się później przydać
         this.load.image("diamond", "sprites/diamond.png")
         this.load.coin("explode", "games/invaders/explode.png", {
@@ -128,7 +133,7 @@ class FirstLevel extends Phaser.Scene{
         })*/
         
         //nie moglam znalezc drzwi - na razie jest cokolwiek XD
-        this.load.image("door", "door.png")
+        //this.load.image("door", "door.png")
 
     }
 
@@ -311,6 +316,18 @@ class FirstLevel extends Phaser.Scene{
             repeat: -1
         });
 
+        this.anims.create({
+            key: "doorOpening",
+            frames: this.anims.generateFrameNumbers('door', {
+                start: 0,
+                end: 3,
+            }),
+            frameRate: 5,
+            repeat: 0,
+            repeatDelay: 0
+        }
+    );
+
         Phaser.Actions.Call(enemies.getChildren(), child => {
             child.anims.play('enemieRightMovement', true);
         });
@@ -336,6 +353,12 @@ class FirstLevel extends Phaser.Scene{
             }
         });
         
+        if(!this.doorOpen && currentNumberOfCoins == minNumberOfCoins)
+        {
+            this.doorOpen = true;
+            door.anims.play("doorOpening", true);
+        }
+
         if(playerControlKeys.left.isDown)
         {
             player.anims.play("leftMovement", true);
@@ -376,7 +399,7 @@ class FirstLevel extends Phaser.Scene{
             //zmienic pozniej na if((playerControlKeys.up.isDown) && this.currentNumberOfCoins == this.minNumberOfConis)
             //if(currentNumberOfCoins >=0) 
             if(currentNumberOfCoins == minNumberOfCoins)
-            {
+            { 
                 this.physics.overlap(player, door, this.playerOpenDoor);
             }
             else
@@ -387,7 +410,7 @@ class FirstLevel extends Phaser.Scene{
         }
         
         //level finsihed or sth like that
-        if(gameFinished)    this.nextScene();
+        if(gameFinished) this.nextScene();
         if(!gameWon)    this.gameOver();
 
         if(this.physics.overlap(player, ladders)) this.physics.overlap(player, ladders, this.playerIsOnLadder)
@@ -401,7 +424,6 @@ class FirstLevel extends Phaser.Scene{
         this.physics.collide(enemies, player, this.playerDies);
         this.physics.collide(this.bulletsGroup, enemies, this.killEnemie);
 
-        if(playerControlKeys.shift.isDown) this.nextScene();
     }
 
     shoot(side)
@@ -489,6 +511,7 @@ class FirstLevel extends Phaser.Scene{
     
     playerOpenDoor(player, door)
     { 
+        console.log(numberOfCoinsText+ " "+ minNumberOfCoins);
         gameFinished = true;
     }
 
@@ -652,6 +675,7 @@ class FirstLevel extends Phaser.Scene{
 
     nextScene()
     {
+        console.log(gameFinished)
         gameFinished = false;
         currentNumberOfCoins = 0;
         this.scene.stop("FirstLevel");
